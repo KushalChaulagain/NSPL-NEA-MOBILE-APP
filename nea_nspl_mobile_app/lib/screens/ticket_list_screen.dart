@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../config/theme.dart';
 import '../providers/ticket_provider.dart';
+import 'ticket_completion_screen.dart';
+import 'ticket_detail_screen.dart';
 
 class TicketListScreen extends StatefulWidget {
   const TicketListScreen({super.key});
@@ -13,11 +15,7 @@ class TicketListScreen extends StatefulWidget {
 
 class _TicketListScreenState extends State<TicketListScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final List<String> _statusFilters = [
-    'All',
-    'Pending',
-    'Completed'
-  ];
+  final List<String> _statusFilters = ['All', 'Pending', 'Completed'];
   String _selectedFilter = 'All';
 
   @override
@@ -49,6 +47,11 @@ class _TicketListScreenState extends State<TicketListScreen> {
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: const Text('My Tickets'),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
       ),
@@ -166,22 +169,31 @@ class _TicketListScreenState extends State<TicketListScreen> {
         children: [
           ListTile(
             title: Text(
-              ticket.title,
+              ticket.title.isEmpty ? "Task: ${ticket.id}" : ticket.title,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text('Meter #: ${ticket.meterNumber}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    'Meter: ${ticket.meterNumber.isEmpty ? "N/A" : ticket.meterNumber}'),
+              ],
+            ),
             trailing: Icon(statusIcon, color: statusColor),
           ),
           const Divider(height: 0),
-         
           ButtonBar(
             alignment: MainAxisAlignment.end,
             buttonPadding: const EdgeInsets.symmetric(horizontal: 8),
             children: [
               TextButton(
                 onPressed: () {
-                  // View ticket details
-                  // To be implemented
+                  // Navigate to ticket details
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => TicketDetailScreen(ticketId: ticket.id),
+                    ),
+                  );
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: AppTheme.primaryColor,
@@ -189,15 +201,24 @@ class _TicketListScreenState extends State<TicketListScreen> {
                 child: const Text('VIEW DETAILS'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Complete ticket
-                  // To be implemented
-                },
+                onPressed: ticket.status.toLowerCase() == 'completed'
+                    ? null
+                    : () {
+                        // Navigate to ticket completion
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                TicketCompletionScreen(ticket: ticket),
+                          ),
+                        );
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryColor,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('COMPLETE'),
+                child: Text(ticket.status.toLowerCase() == 'completed'
+                    ? 'COMPLETED'
+                    : 'COMPLETE'),
               ),
             ],
           ),

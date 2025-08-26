@@ -26,6 +26,8 @@ class TicketCompletionScreen extends StatefulWidget {
 class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _meterReadingController = TextEditingController();
+  final TextEditingController _meterSerialNumberController =
+      TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   final List<File> _meterPhotos = [];
   bool _isMeterAccessible = true;
@@ -40,6 +42,7 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
   @override
   void dispose() {
     _meterReadingController.dispose();
+    _meterSerialNumberController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -60,6 +63,7 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
       // Create form data
       final formData = {
         'meterReading': _meterReadingController.text.trim(),
+        'meterSerialNumber': _meterSerialNumberController.text.trim(),
         'notes': _notesController.text.trim(),
         'isMeterAccessible': _isMeterAccessible,
         'consumerPresence': _consumerPresenceStatus,
@@ -164,6 +168,25 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
+
+                    // Meter Serial Number
+                    Text(
+                      'Meter Serial Number',
+                      style: AppTheme.subheadingStyle.copyWith(fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _meterSerialNumberController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter meter serial number',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        suffixIcon: const Icon(Icons.pin),
+                      ),
+                      // No validator since this field is optional
+                    ),
+                    const SizedBox(height: 16),
 
                     // Meter reading
                     Text(
