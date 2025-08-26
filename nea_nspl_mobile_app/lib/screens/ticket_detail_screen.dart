@@ -71,7 +71,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 color: AppTheme.errorColor.withOpacity(0.5),
               ),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 'Failed to load ticket details',
                 style: AppTheme.subheadingStyle,
               ),
@@ -132,7 +132,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          ticket.title,
+                          ticket.title.isEmpty
+                              ? ticket.id
+                              : ticket.title,
                           style: AppTheme.headingStyle,
                         ),
                       ),
@@ -154,7 +156,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    ticket.description,
+                    ticket.description.isEmpty
+                        ? "No description provided"
+                        : ticket.description,
                     style: AppTheme.bodyStyle,
                   ),
                 ],
@@ -163,7 +167,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             const SizedBox(height: 24),
 
             // Consumer details section
-            Text(
+            const Text(
               'Consumer Details',
               style: AppTheme.subheadingStyle,
             ),
@@ -183,11 +187,6 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               ),
               child: Column(
                 children: [
-                  _buildDetailRow('Name', ticket.consumerName, Icons.person),
-                  const SizedBox(height: 12),
-                  _buildDetailRow(
-                      'Address', ticket.consumerAddress, Icons.location_on),
-                  const SizedBox(height: 12),
                   _buildDetailRow(
                       'Meter Number', ticket.meterNumber, Icons.electric_meter),
                 ],
@@ -200,7 +199,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Attachments',
                     style: AppTheme.subheadingStyle,
                   ),
@@ -221,8 +220,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     child: Column(
                       children: ticket.attachments.map((url) {
                         return ListTile(
-                          leading:
-                              Icon(Icons.image, color: AppTheme.primaryColor),
+                          leading: const Icon(Icons.image,
+                              color: AppTheme.primaryColor),
                           title: const Text('Photo'),
                           trailing: const Icon(Icons.visibility),
                           onTap: () {
@@ -271,14 +270,14 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             children: [
               Text(
                 label,
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppTheme.secondaryColor,
                   fontSize: 14,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
-                value,
+                value.isEmpty ? "Not available" : value,
                 style: AppTheme.bodyStyle,
               ),
             ],
@@ -307,7 +306,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
     return Chip(
       label: Text(
-        status,
+        status.isEmpty ? "Unknown" : status,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,

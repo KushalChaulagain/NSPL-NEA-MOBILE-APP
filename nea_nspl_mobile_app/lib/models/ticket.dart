@@ -4,8 +4,6 @@ class Ticket {
   final String description;
   final String status;
   final String assignedTo;
-  final String consumerName;
-  final String consumerAddress;
   final String meterNumber;
   final DateTime createdAt;
   final List<String> attachments;
@@ -22,8 +20,6 @@ class Ticket {
     this.description = '',
     required this.status,
     required this.assignedTo,
-    this.consumerName = '',
-    this.consumerAddress = '',
     this.meterNumber = '',
     required this.createdAt,
     this.attachments = const [],
@@ -41,8 +37,6 @@ class Ticket {
       description: json['description'] ?? '',
       status: json['status'] ?? 'pending',
       assignedTo: json['assignedTo'] ?? '',
-      consumerName: json['consumerName'] ?? '',
-      consumerAddress: json['consumerAddress'] ?? '',
       meterNumber: json['meterNumber'] ?? json['meter'] ?? '',
       createdAt: DateTime.parse(json['createdAt']),
       attachments: json['attachments'] != null
@@ -64,8 +58,6 @@ class Ticket {
       'description': description,
       'status': status,
       'assignedTo': assignedTo,
-      'consumerName': consumerName,
-      'consumerAddress': consumerAddress,
       'meterNumber': meterNumber,
       'createdAt': createdAt.toIso8601String(),
       'attachments': attachments,

@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
-        android:label="nea_nspl_mobile_app"
+        android:label="NEA NSPL"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

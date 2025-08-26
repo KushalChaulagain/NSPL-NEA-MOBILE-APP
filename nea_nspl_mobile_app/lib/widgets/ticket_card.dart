@@ -65,19 +65,7 @@ class TicketCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Consumer info
-                Row(
-                  children: [
-                    Icon(Icons.person,
-                        size: 16, color: AppTheme.secondaryColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Consumer: ${ticket.consumerName}',
-                      style: AppTheme.bodyStyle.copyWith(fontSize: 14),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
+                
 
                 // Meter number
                 Row(
@@ -93,22 +81,7 @@ class TicketCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // Address
-                Row(
-                  children: [
-                    Icon(Icons.location_on,
-                        size: 16, color: AppTheme.secondaryColor),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Address: ${ticket.consumerAddress}',
-                        style: AppTheme.bodyStyle.copyWith(fontSize: 14),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
+                
               ],
             ),
           ),

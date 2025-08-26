@@ -263,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Ticket stats cards in grid
+              // Task stats cards in grid
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -278,15 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.pending_actions,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
+                    const SizedBox(width: 8),
                     Expanded(
                       child: _buildStatCard(
                         'Completed',
@@ -297,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.check_circle,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: _buildStatCard(
                         'Total',
@@ -405,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildStatCard(
       String title, String count, Color color, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -418,37 +410,42 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         border: Border(left: BorderSide(color: color, width: 3)),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(7),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              Text(
-                count,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  height: 1.2,
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
                 ),
+                child: Icon(icon, color: color, size: 16),
               ),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  count,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    height: 1.2,
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -493,23 +490,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    ticket.title,
+                    ticket.title.isEmpty ? "${ticket.id}" : ticket.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Consumer: ${ticket.consumerName}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
-                  ),
                   const SizedBox(height: 2),
                   Text(
-                    'Meter: ${ticket.meterNumber}',
+                    'Meter: ${ticket.meterNumber.isEmpty ? "N/A" : ticket.meterNumber}',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,

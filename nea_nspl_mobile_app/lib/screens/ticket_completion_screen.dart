@@ -1,7 +1,8 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../config/theme.dart';
 import '../models/ticket.dart';
 import '../providers/ticket_provider.dart';
@@ -48,8 +49,8 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
       // Validate photos
       if (_meterPhotos.length < 2) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Please capture at least 2 meter photos'),
+          const SnackBar(
+            content: Text('Please capture at least 2 meter photos'),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -76,8 +77,8 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Ticket completed successfully'),
+          const SnackBar(
+            content: Text('Ticket completed successfully'),
             backgroundColor: AppTheme.completedColor,
           ),
         );
@@ -147,18 +148,16 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.ticket.title,
+                            widget.ticket.title.isEmpty
+                                ? widget.ticket.id
+                                : widget.ticket.title,
                             style: AppTheme.bodyStyle.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Consumer: ${widget.ticket.consumerName}',
-                            style: AppTheme.captionStyle,
-                          ),
-                          Text(
-                            'Meter #: ${widget.ticket.meterNumber}',
+                            'Meter: ${widget.ticket.meterNumber.isEmpty ? "N/A" : widget.ticket.meterNumber}',
                             style: AppTheme.captionStyle,
                           ),
                         ],
@@ -317,16 +316,16 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
   }
 
   Widget _buildSubmittingIndicator() {
-    return Column(
+    return const Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const LoadingIndicator(size: 40),
-        const SizedBox(height: 16),
+        LoadingIndicator(size: 40),
+        SizedBox(height: 16),
         Text(
           'Submitting ticket completion...',
           style: AppTheme.subheadingStyle,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           'Please wait while we upload your data',
           style: AppTheme.captionStyle,

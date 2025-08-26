@@ -173,41 +173,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
             trailing: Icon(statusIcon, color: statusColor),
           ),
           const Divider(height: 0),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.person,
-                        size: 16, color: AppTheme.secondaryColor),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Consumer: ${ticket.consumerName}',
-                      style: AppTheme.bodyStyle.copyWith(fontSize: 14),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on,
-                        size: 16, color: AppTheme.secondaryColor),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Address: ${ticket.consumerAddress}',
-                        style: AppTheme.bodyStyle.copyWith(fontSize: 14),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+         
           ButtonBar(
             alignment: MainAxisAlignment.end,
             buttonPadding: const EdgeInsets.symmetric(horizontal: 8),

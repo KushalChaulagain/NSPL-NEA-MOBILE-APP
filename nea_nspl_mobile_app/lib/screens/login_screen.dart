@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 // NSPL Logo with error handling
                 Image.asset(
-                  'assets/images/nspl_logo.jpg',
+                  'assets/images/nspl_logo.png',
                   width: 120,
                   height: 120,
                   errorBuilder: (context, error, stackTrace) {

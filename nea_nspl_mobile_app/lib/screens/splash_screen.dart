@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             // NSPL Logo with error handling
             Image.asset(
-              'assets/images/nspl_logo.jpg',
+              'assets/images/nspl_logo.png',
               width: 180,
               height: 180,
               errorBuilder: (context, error, stackTrace) {

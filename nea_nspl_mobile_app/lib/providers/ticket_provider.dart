@@ -156,8 +156,6 @@ class TicketProvider extends ChangeNotifier {
           .where((ticket) =>
               ticket.title.toLowerCase().contains(query) ||
               ticket.description.toLowerCase().contains(query) ||
-              ticket.consumerName.toLowerCase().contains(query) ||
-              ticket.consumerAddress.toLowerCase().contains(query) ||
               ticket.meterNumber.toLowerCase().contains(query))
           .toList();
     }
