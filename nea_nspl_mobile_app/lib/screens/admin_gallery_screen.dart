@@ -8,7 +8,7 @@ import '../widgets/error_view.dart';
 import '../widgets/gallery_grid_widget.dart';
 import '../widgets/image_search_widget.dart';
 import '../widgets/loading_indicator.dart';
-import 'login_screen.dart';
+import 'profile_screen.dart';
 
 class AdminGalleryScreen extends StatefulWidget {
   const AdminGalleryScreen({super.key});
@@ -107,20 +107,6 @@ class _AdminGalleryScreenState extends State<AdminGalleryScreen> {
         ),
         backgroundColor: AppTheme.primaryColor,
         elevation: 4,
-        leading: IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white),
-          onPressed: () async {
-            final authProvider =
-                Provider.of<AuthProvider>(context, listen: false);
-            await authProvider.logout();
-            if (mounted) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
-            }
-          },
-          tooltip: 'Logout',
-        ),
         actions: [
           IconButton(
             icon: Icon(_showSearchFilters ? Icons.search_off : Icons.search),
@@ -128,11 +114,33 @@ class _AdminGalleryScreenState extends State<AdminGalleryScreen> {
             onPressed: _toggleSearchFilters,
             tooltip: _showSearchFilters ? 'Hide Filters' : 'Show Filters',
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            color: Colors.white,
-            onPressed: _handleRefresh,
-            tooltip: 'Refresh',
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 16,
+                  child: Text(
+                    authProvider.user != null &&
+                            authProvider.user!.name.isNotEmpty
+                        ? authProvider.user!.name[0].toUpperCase()
+                        : 'A',
+                    style: const TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -263,140 +271,64 @@ class _AdminGalleryScreenState extends State<AdminGalleryScreen> {
           return _buildEmptyState();
         }
 
-        return Column(
-          children: [
-            // Stats header
-            _buildStatsHeader(galleryProvider),
-
-            // Gallery grid
-            Expanded(
-              child: GalleryGridWidget(
-                images: galleryProvider.images,
-                scrollController: _scrollController,
-              ),
-            ),
-          ],
+        return GalleryGridWidget(
+          images: galleryProvider.images,
+          scrollController: _scrollController,
         );
     }
   }
 
-  Widget _buildStatsHeader(GalleryProvider galleryProvider) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
-      padding: const EdgeInsets.all(AppTheme.spacing16),
-      decoration: AppTheme.cardDecoration,
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacing8),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.photo_library,
-              color: AppTheme.primaryColor,
-              size: 16,
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacing12),
-          Expanded(
+  Widget _buildEmptyState() {
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height -
+              200, // Account for app bar and other UI elements
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Showing ${galleryProvider.filteredImageCount} of ${galleryProvider.totalImageCount} images',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppTheme.onSurfaceVariantColor,
-                    fontWeight: FontWeight.w500,
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.photo_library_outlined,
+                    size: 40,
+                    color: AppTheme.primaryColor,
                   ),
                 ),
-                // Show batch loading progress when loading signed URLs
-                if (galleryProvider.status == GalleryStatus.loaded &&
-                    galleryProvider.signedUrlProgress <
-                        galleryProvider.totalImages &&
-                    galleryProvider.totalImages > 0)
-                  Column(
-                    children: [
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const SizedBox(
-                            width: 12,
-                            height: 12,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Loading images... ${galleryProvider.signedUrlProgress}/${galleryProvider.totalImages}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                const SizedBox(height: 24),
+                const Text(
+                  'No Images Found',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurfaceColor,
                   ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'No images have been uploaded by field agents yet.',
+                  style: AppTheme.captionStyle,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: _handleRefresh,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Refresh'),
+                  style: AppTheme.primaryButtonStyle,
+                ),
               ],
             ),
           ),
-          if (galleryProvider.isSearching)
-            const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.spacing32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.photo_library_outlined,
-                size: 40,
-                color: AppTheme.primaryColor,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            const Text(
-              'No Images Found',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.onSurfaceColor,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing8),
-            const Text(
-              'No images have been uploaded by field agents yet.',
-              style: AppTheme.captionStyle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            ElevatedButton.icon(
-              onPressed: _handleRefresh,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Refresh'),
-              style: AppTheme.primaryButtonStyle,
-            ),
-          ],
         ),
       ),
     );

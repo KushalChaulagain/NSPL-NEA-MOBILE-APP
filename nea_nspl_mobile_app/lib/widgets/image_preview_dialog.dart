@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../config/theme.dart';
 import '../models/gallery_image.dart';
 import '../providers/gallery_provider.dart';
+import '../services/image_download_service.dart';
 
 class ImagePreviewDialog extends StatelessWidget {
   final GalleryImage image;
@@ -142,10 +141,10 @@ class ImagePreviewDialog extends StatelessWidget {
 
                     // Image details
                     _buildDetailRow('Task ID', image.taskId),
-                    _buildDetailRow('Task Title',
+                    _buildDetailRow('Site ID',
                         image.taskTitle.isNotEmpty ? image.taskTitle : 'N/A'),
                     _buildDetailRow(
-                        'Meter Number',
+                        'Region',
                         image.meterNumber.isNotEmpty
                             ? image.meterNumber
                             : 'N/A'),
@@ -156,7 +155,6 @@ class ImagePreviewDialog extends StatelessWidget {
                         'Upload Date',
                         DateFormat('MMM d, yyyy h:mm a')
                             .format(image.uploadedAt)),
-                    _buildDetailRow('MIME Type', image.mimeType),
 
                     const SizedBox(height: 16),
 
@@ -219,16 +217,16 @@ class ImagePreviewDialog extends StatelessWidget {
   }
 
   Future<void> _downloadImage(BuildContext context) async {
-    try {
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
 
+    try {
       // Get signed URL for download
       final galleryProvider =
           Provider.of<GalleryProvider>(context, listen: false);
@@ -240,19 +238,25 @@ class ImagePreviewDialog extends StatelessWidget {
         return;
       }
 
-      // Get temporary directory for download
-      final directory = await getTemporaryDirectory();
-      final fileName = '${image.taskId}_${image.fileName}';
-      final filePath = '${directory.path}/$fileName';
+      // Generate filename with timestamp
+      final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final fileName = '${image.taskId}_${timestamp}_${image.fileName}';
 
-      // Download file using Dio
-      final dio = Dio();
-      await dio.download(signedUrl, filePath);
+      // Download and save to gallery
+      final result = await ImageDownloadService.downloadAndSaveToGallery(
+        imageUrl: signedUrl,
+        fileName: fileName,
+        quality: 90,
+      );
 
       Navigator.of(context).pop(); // Close loading dialog
 
-      // Show success dialog with file location and copy option
-      _showDownloadSuccessDialog(context, filePath, fileName);
+      if (result.success) {
+        _showDownloadSuccessDialog(
+            context, result.filePath ?? 'Gallery', fileName);
+      } else {
+        _showErrorSnackBar(context, result.error ?? 'Download failed');
+      }
     } catch (e) {
       Navigator.of(context).pop(); // Close loading dialog
       _showErrorSnackBar(context, 'Download failed: ${e.toString()}');
@@ -273,23 +277,19 @@ class ImagePreviewDialog extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Download Complete'),
-        content: Column(
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 24),
+            SizedBox(width: 8),
+            Text('Download Complete'),
+          ],
+        ),
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Image downloaded successfully!'),
-            const SizedBox(height: 12),
-            const Text('File saved to:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            SelectableText(
-              filePath,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-                'You can find this image in your device\'s file manager or gallery app.'),
+            Text('Image saved to your device gallery!'),
+             SizedBox(height: 12),
           ],
         ),
         actions: [
