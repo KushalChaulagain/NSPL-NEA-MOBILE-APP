@@ -6,6 +6,7 @@ import '../config/theme.dart';
 import '../providers/auth_provider.dart';
 import '../providers/ticket_provider.dart';
 import '../widgets/error_view.dart';
+import 'admin_gallery_screen.dart';
 import 'login_screen.dart';
 import 'notification_screen.dart';
 import 'profile_screen.dart';
@@ -166,6 +167,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+            // Admin-only gallery access
+            if (user?.role.toLowerCase() == 'admin')
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Image Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const AdminGalleryScreen()),
+                  );
+                },
+              ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -182,51 +196,73 @@ class _HomeScreenState extends State<HomeScreen> {
         onRefresh: _loadData,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome banner
+              // Welcome banner - Modern field service design
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      offset: const Offset(0, 2),
-                      blurRadius: 4,
-                    ),
-                  ],
-                ),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
+                padding: const EdgeInsets.all(AppTheme.spacing24),
+                decoration: AppTheme.elevatedCardDecoration,
                 child: Row(
                   children: [
+                    // Avatar
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: Text(
+                          user != null && user.name.isNotEmpty
+                              ? user.name[0].toUpperCase()
+                              : 'U',
+                          style: const TextStyle(
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppTheme.spacing16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
                             'Welcome back,',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
+                            style: AppTheme.captionStyle,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppTheme.spacing4),
                           Text(
                             user?.name ?? 'Field Agent',
                             style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.onSurfaceColor,
                             ),
                           ),
-                          Text(
-                            'Role: ${user?.role ?? 'Field Agent'}',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
+                          const SizedBox(height: AppTheme.spacing4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppTheme.spacing12,
+                              vertical: AppTheme.spacing4,
+                            ),
+                            decoration: AppTheme.getStatusBadgeDecoration(
+                                AppTheme.primaryColor),
+                            child: Text(
+                              user?.role ?? 'Field Agent',
+                              style: const TextStyle(
+                                color: AppTheme.primaryColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -235,37 +271,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppTheme.spacing24),
 
-              // Ticket stats
+              // Ticket stats section
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Tasks Overview',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTheme.subheadingStyle,
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: AppTheme.spacing8),
                     Text(
                       'Your current task statistics',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: AppTheme.captionStyle,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppTheme.spacing20),
 
-              // Task stats cards in grid
+              // Task stats cards in grid - Modern field service design
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
                 child: Row(
                   children: [
                     Expanded(
@@ -278,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.pending_actions,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppTheme.spacing12),
                     Expanded(
                       child: _buildStatCard(
                         'Completed',
@@ -289,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.check_circle,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppTheme.spacing12),
                     Expanded(
                       child: _buildStatCard(
                         'Total',
@@ -301,11 +332,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppTheme.spacing32),
 
               // Recent tickets header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppTheme.spacing20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -314,17 +346,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           'Recent Tasks',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppTheme.subheadingStyle,
                         ),
+                        SizedBox(height: AppTheme.spacing4),
                         Text(
                           'Your latest assigned tasks',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
+                          style: AppTheme.captionStyle,
                         ),
                       ],
                     ),
@@ -335,31 +362,42 @@ class _HomeScreenState extends State<HomeScreen> {
                               builder: (_) => const TicketListScreen()),
                         );
                       },
-                      child: const Row(
-                        children: [
-                          Text(
-                            'View All',
-                            style: TextStyle(
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacing12,
+                          vertical: AppTheme.spacing8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'View All',
+                              style: TextStyle(
+                                color: AppTheme.primaryColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 12,
-                            color: AppTheme.primaryColor,
-                          ),
-                        ],
+                            SizedBox(width: AppTheme.spacing4),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 12,
+                              color: AppTheme.primaryColor,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppTheme.spacing20),
 
-              // Recent tickets list with dividers
+              // Recent tickets list with modern cards
               ticketProvider.status == TicketStatus.loading
                   ? const Center(child: CircularProgressIndicator())
                   : ticketProvider.status == TicketStatus.error
@@ -376,16 +414,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: _buildEmptyState(),
                               ),
                             )
-                          : ListView.separated(
+                          : ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppTheme.spacing16),
                               itemCount: ticketProvider.tickets.length > 3
                                   ? 3
                                   : ticketProvider.tickets.length,
-                              separatorBuilder: (context, index) =>
-                                  const Divider(height: 1),
-                              itemBuilder: (context, index) => _buildTicketCard(
-                                  ticketProvider.tickets[index]),
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: AppTheme.spacing12),
+                                child: _buildTicketCard(
+                                    ticketProvider.tickets[index]),
+                              ),
                             ),
             ],
           ),
@@ -397,52 +439,41 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildStatCard(
       String title, String count, Color color, IconData icon) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            offset: const Offset(0, 2),
-            blurRadius: 4,
-          ),
-        ],
-        border: Border(left: BorderSide(color: color, width: 3)),
-      ),
+      padding: const EdgeInsets.all(AppTheme.spacing16),
+      decoration: AppTheme.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(AppTheme.spacing8),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: color, size: 16),
+                child: Icon(icon, color: color, size: 20),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppTheme.spacing12),
               Expanded(
                 child: Text(
                   count,
                   style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.onSurfaceColor,
                     height: 1.2,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppTheme.spacing8),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey[600],
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppTheme.onSurfaceVariantColor,
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
@@ -461,67 +492,68 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        color: Colors.white,
+        padding: const EdgeInsets.all(AppTheme.spacing20),
+        decoration: AppTheme.cardDecoration,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left side - icon
+            // Left side - status icon
             Container(
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 color: _getStatusColor(ticket.status).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _getStatusColor(ticket.status).withOpacity(0.3),
+                  width: 1,
+                ),
               ),
               child: Center(
                 child: Icon(
                   _getStatusIcon(ticket.status),
                   color: _getStatusColor(ticket.status),
-                  size: 20,
+                  size: 24,
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppTheme.spacing16),
             // Center - details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    ticket.title.isEmpty ? "${ticket.id}" : ticket.title,
+                    ticket.title.isEmpty ? "Task #${ticket.id}" : ticket.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
+                      color: AppTheme.onSurfaceColor,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppTheme.spacing4),
                   Text(
                     'Meter: ${ticket.meterNumber.isEmpty ? "N/A" : ticket.meterNumber}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
+                    style: const TextStyle(
+                      color: AppTheme.onSurfaceVariantColor,
                       fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacing8),
+                  Text(
+                    DateFormat('MMM d, yyyy').format(ticket.createdAt),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.onSurfaceVariantColor,
                     ),
                   ),
                 ],
               ),
             ),
-            // Right side - status
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildStatusChip(ticket.status),
-                const SizedBox(height: 8),
-                Text(
-                  DateFormat('MMM d').format(ticket.createdAt),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
+            // Right side - status badge
+            _buildStatusChip(ticket.status),
           ],
         ),
       ),
@@ -561,26 +593,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
     switch (status.toLowerCase()) {
       case 'pending':
-        chipColor = AppTheme.pendingColor.withOpacity(0.15);
-        textColor = AppTheme.pendingColor;
+        chipColor = AppTheme.pendingColor;
+        textColor = Colors.white;
         displayStatus = 'Pending';
         break;
       case 'completed':
-        chipColor = AppTheme.completedColor.withOpacity(0.15);
-        textColor = AppTheme.completedColor;
+        chipColor = AppTheme.completedColor;
+        textColor = Colors.white;
         displayStatus = 'Completed';
         break;
       default:
-        chipColor = AppTheme.secondaryColor.withOpacity(0.15);
-        textColor = AppTheme.secondaryColor;
+        chipColor = AppTheme.secondaryColor;
+        textColor = Colors.white;
         displayStatus = status;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacing12, vertical: AppTheme.spacing6),
       decoration: BoxDecoration(
         color: chipColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         displayStatus,
@@ -596,61 +629,48 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildEmptyState() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      padding: const EdgeInsets.all(AppTheme.spacing32),
+      decoration: AppTheme.cardDecoration,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: 64,
-            height: 64,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: AppTheme.primaryColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.assignment_outlined,
-              size: 30,
-              color: Colors.grey,
+              size: 40,
+              color: AppTheme.primaryColor,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacing24),
           const Text(
             'No Tasks Assigned',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.onSurfaceColor,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppTheme.spacing8),
           const Text(
             'You currently have no tasks assigned to you',
             style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
+              fontSize: 14,
+              color: AppTheme.onSurfaceVariantColor,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 36,
-            child: ElevatedButton(
-              onPressed: _loadData,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              child: const Text('Refresh'),
-            ),
+          const SizedBox(height: AppTheme.spacing24),
+          ElevatedButton(
+            onPressed: _loadData,
+            style: AppTheme.primaryButtonStyle,
+            child: const Text('Refresh'),
           ),
         ],
       ),

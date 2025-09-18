@@ -5,6 +5,7 @@ import '../config/theme.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/error_dialog.dart';
 import '../widgets/loading_indicator.dart';
+import 'admin_gallery_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,9 +55,17 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+        // Check if user is admin - redirect to gallery directly
+        if (authProvider.user?.role.toLowerCase() == 'admin') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const AdminGalleryScreen()),
+          );
+        } else {
+          // Regular users go to home screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+          );
+        }
       } else {
         // Show error dialog
         if (mounted) {
@@ -138,12 +147,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Username field
                       TextFormField(
                         controller: _usernameController,
-                        decoration: InputDecoration(
-                          labelText: 'Username',
-                          prefixIcon: const Icon(Icons.person),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                        decoration: AppTheme.getInputDecoration(
+                          'Username',
+                          hint: 'Enter your username',
+                        ).copyWith(
+                          prefixIcon: const Icon(Icons.person,
+                              color: AppTheme.primaryColor),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -153,27 +162,28 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         enabled: !isAuthenticating,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppTheme.spacing20),
                       // Password field
                       TextFormField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock),
+                        decoration: AppTheme.getInputDecoration(
+                          'Password',
+                          hint: 'Enter your password',
+                        ).copyWith(
+                          prefixIcon: const Icon(Icons.lock,
+                              color: AppTheme.primaryColor),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility
                                   : Icons.visibility_off,
+                              color: AppTheme.onSurfaceVariantColor,
                             ),
                             onPressed: () {
                               setState(() {
                                 _obscurePassword = !_obscurePassword;
                               });
                             },
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         obscureText: _obscurePassword,
@@ -185,21 +195,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         enabled: !isAuthenticating,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppTheme.spacing32),
                       // Login button
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 56,
                         child: ElevatedButton(
                           onPressed: isAuthenticating ? null : _handleLogin,
-                          style: AppTheme.primaryButtonStyle,
+                          style: AppTheme.floatingButtonStyle,
                           child: isAuthenticating
                               ? const LoadingIndicator(color: Colors.white)
                               : const Text(
-                                  'LOGIN',
+                                  'Login',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                         ),

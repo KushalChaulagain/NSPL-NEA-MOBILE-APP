@@ -120,88 +120,113 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
       body: isSubmitting
           ? Center(child: _buildSubmittingIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppTheme.spacing16),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Ticket summary
+                    // Ticket summary - Modern field service design
                     Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
+                      padding: const EdgeInsets.all(AppTheme.spacing24),
+                      decoration: AppTheme.elevatedCardDecoration,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Ticket Summary',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
+                          Row(
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.all(AppTheme.spacing8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.assignment,
+                                  color: AppTheme.primaryColor,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacing12),
+                              const Text(
+                                'Ticket Summary',
+                                style: AppTheme.subheadingStyle,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppTheme.spacing16),
                           Text(
                             widget.ticket.title.isEmpty
-                                ? widget.ticket.id
+                                ? "Task #${widget.ticket.id}"
                                 : widget.ticket.title,
-                            style: AppTheme.bodyStyle.copyWith(
-                              fontWeight: FontWeight.w500,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.onSurfaceColor,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Meter: ${widget.ticket.meterNumber.isEmpty ? "N/A" : widget.ticket.meterNumber}',
-                            style: AppTheme.captionStyle,
+                          const SizedBox(height: AppTheme.spacing8),
+                          Container(
+                            padding: const EdgeInsets.all(AppTheme.spacing12),
+                            decoration: BoxDecoration(
+                              color: AppTheme.backgroundColor,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppTheme.outlineColor),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.electric_meter,
+                                  color: AppTheme.primaryColor,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: AppTheme.spacing8),
+                                Text(
+                                  'Meter: ${widget.ticket.meterNumber.isEmpty ? "N/A" : widget.ticket.meterNumber}',
+                                  style: AppTheme.captionStyle,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppTheme.spacing24),
 
                     // Meter Serial Number
-                    Text(
+                    const Text(
                       'Meter Serial Number',
-                      style: AppTheme.subheadingStyle.copyWith(fontSize: 16),
+                      style: AppTheme.subheadingStyle,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppTheme.spacing12),
                     TextFormField(
                       controller: _meterSerialNumberController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter meter serial number',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        suffixIcon: const Icon(Icons.pin),
+                      decoration: AppTheme.getInputDecoration(
+                        'Meter Serial Number',
+                        hint: 'Enter meter serial number',
+                      ).copyWith(
+                        suffixIcon:
+                            const Icon(Icons.pin, color: AppTheme.primaryColor),
                       ),
                       // No validator since this field is optional
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppTheme.spacing20),
 
                     // Meter reading
-                    Text(
+                    const Text(
                       'Meter Reading',
-                      style: AppTheme.subheadingStyle.copyWith(fontSize: 16),
+                      style: AppTheme.subheadingStyle,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppTheme.spacing12),
                     TextFormField(
                       controller: _meterReadingController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter current meter reading',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        suffixIcon: const Icon(Icons.electric_meter),
+                      decoration: AppTheme.getInputDecoration(
+                        'Meter Reading',
+                        hint: 'Enter current meter reading',
+                      ).copyWith(
+                        suffixIcon: const Icon(Icons.electric_meter,
+                            color: AppTheme.primaryColor),
                       ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -211,59 +236,61 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppTheme.spacing20),
 
                     // Meter accessibility
-                    Text(
+                    const Text(
                       'Meter Accessibility',
-                      style: AppTheme.subheadingStyle.copyWith(fontSize: 16),
+                      style: AppTheme.subheadingStyle,
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: RadioListTile<bool>(
-                            title: const Text('Accessible'),
-                            value: true,
-                            groupValue: _isMeterAccessible,
-                            onChanged: (value) {
-                              setState(() {
-                                _isMeterAccessible = value!;
-                              });
-                            },
+                    const SizedBox(height: AppTheme.spacing12),
+                    Container(
+                      padding: const EdgeInsets.all(AppTheme.spacing16),
+                      decoration: AppTheme.cardDecoration,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: RadioListTile<bool>(
+                              title: const Text('Accessible'),
+                              value: true,
+                              groupValue: _isMeterAccessible,
+                              activeColor: AppTheme.primaryColor,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isMeterAccessible = value!;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: RadioListTile<bool>(
-                            title: const Text('Inaccessible'),
-                            value: false,
-                            groupValue: _isMeterAccessible,
-                            onChanged: (value) {
-                              setState(() {
-                                _isMeterAccessible = value!;
-                              });
-                            },
+                          Expanded(
+                            child: RadioListTile<bool>(
+                              title: const Text('Inaccessible'),
+                              value: false,
+                              groupValue: _isMeterAccessible,
+                              activeColor: AppTheme.primaryColor,
+                              onChanged: (value) {
+                                setState(() {
+                                  _isMeterAccessible = value!;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppTheme.spacing20),
 
                     // Consumer presence
-                    Text(
+                    const Text(
                       'Consumer Presence',
-                      style: AppTheme.subheadingStyle.copyWith(fontSize: 16),
+                      style: AppTheme.subheadingStyle,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppTheme.spacing12),
                     DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
+                      decoration: AppTheme.getInputDecoration(
+                        'Consumer Presence',
+                        hint: 'Select consumer presence status',
                       ),
-                      hint: const Text('Select consumer presence status'),
                       value: _consumerPresenceStatus,
                       onChanged: (value) {
                         setState(() {
@@ -283,7 +310,7 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppTheme.spacing24),
 
                     // Photo capture widget
                     PhotoCaptureWidget(
@@ -296,37 +323,34 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
                     const SizedBox(height: 24),
 
                     // Notes
-                    Text(
+                    const Text(
                       'Additional Notes',
-                      style: AppTheme.subheadingStyle.copyWith(fontSize: 16),
+                      style: AppTheme.subheadingStyle,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppTheme.spacing12),
                     TextFormField(
                       controller: _notesController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter any additional information',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: const EdgeInsets.all(16),
+                      decoration: AppTheme.getInputDecoration(
+                        'Additional Notes',
+                        hint: 'Enter any additional information',
                       ),
                       maxLines: 3,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppTheme.spacing32),
 
                     // Submit button
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: 56,
                       child: ElevatedButton(
                         onPressed:
                             isSubmitting ? null : _submitTicketCompletion,
-                        style: AppTheme.primaryButtonStyle,
+                        style: AppTheme.floatingButtonStyle,
                         child: const Text(
-                          'SUBMIT',
+                          'Submit Completion',
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../config/theme.dart';
 import '../providers/auth_provider.dart';
+import 'admin_gallery_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
@@ -28,11 +29,19 @@ class _SplashScreenState extends State<SplashScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.initialize();
 
-    // Navigate based on auth status
+    // Navigate based on auth status and user role
     if (authProvider.status == AuthStatus.authenticated) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      // Check if user is admin - redirect to gallery directly
+      if (authProvider.user?.role.toLowerCase() == 'admin') {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const AdminGalleryScreen()),
+        );
+      } else {
+        // Regular users go to home screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const LoginScreen()),

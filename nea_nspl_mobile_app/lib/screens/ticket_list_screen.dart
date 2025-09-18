@@ -57,26 +57,32 @@ class _TicketListScreenState extends State<TicketListScreen> {
       ),
       body: Column(
         children: [
-          // Search and filter section
+          // Search and filter section - Modern field service design
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppTheme.spacing20),
+            decoration: const BoxDecoration(
+              color: AppTheme.surfaceColor,
+              border: Border(
+                bottom: BorderSide(color: AppTheme.outlineColor, width: 1),
+              ),
+            ),
             child: Column(
               children: [
                 // Search box
                 TextField(
                   controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search tickets...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  decoration: AppTheme.getInputDecoration(
+                    'Search tickets...',
+                    hint: 'Enter ticket ID or meter number',
+                  ).copyWith(
+                    prefixIcon: const Icon(Icons.search,
+                        color: AppTheme.onSurfaceVariantColor),
                   ),
                   onChanged: (query) {
                     ticketProvider.setSearchQuery(query);
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppTheme.spacing20),
 
                 // Status filter chips
                 SizedBox(
@@ -89,7 +95,8 @@ class _TicketListScreenState extends State<TicketListScreen> {
                       final isSelected = _selectedFilter == filter;
 
                       return Padding(
-                        padding: const EdgeInsets.only(right: 8),
+                        padding:
+                            const EdgeInsets.only(right: AppTheme.spacing12),
                         child: FilterChip(
                           label: Text(filter),
                           selected: isSelected,
@@ -99,12 +106,17 @@ class _TicketListScreenState extends State<TicketListScreen> {
                               ticketProvider.setFilterStatus(filter);
                             });
                           },
-                          backgroundColor: Colors.white,
-                          selectedColor: AppTheme.primaryColor.withOpacity(0.2),
+                          backgroundColor:
+                              AppTheme.outlineColor.withOpacity(0.3),
+                          selectedColor: AppTheme.primaryColor,
                           labelStyle: TextStyle(
                             color: isSelected
-                                ? AppTheme.primaryColor
-                                : AppTheme.secondaryColor,
+                                ? Colors.white
+                                : AppTheme.onSurfaceColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       );
@@ -124,11 +136,15 @@ class _TicketListScreenState extends State<TicketListScreen> {
                   : ticketProvider.tickets.isEmpty
                       ? _buildEmptyState()
                       : ListView.builder(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(AppTheme.spacing16),
                           itemCount: ticketProvider.tickets.length,
                           itemBuilder: (context, index) {
                             final ticket = ticketProvider.tickets[index];
-                            return _buildTicketCard(ticket);
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: AppTheme.spacing12),
+                              child: _buildTicketCard(ticket),
+                            );
                           },
                         ),
             ),
@@ -160,67 +176,125 @@ class _TicketListScreenState extends State<TicketListScreen> {
         statusIcon = Icons.help_outline;
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+    return Container(
+      decoration: AppTheme.cardDecoration,
       child: Column(
         children: [
-          ListTile(
-            title: Text(
-              ticket.title.isEmpty ? "Task: ${ticket.id}" : ticket.title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Header section
+          Padding(
+            padding: const EdgeInsets.all(AppTheme.spacing20),
+            child: Row(
               children: [
-                Text(
-                    'Meter: ${ticket.meterNumber.isEmpty ? "N/A" : ticket.meterNumber}'),
+                // Status icon
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: statusColor.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(statusIcon, color: statusColor, size: 24),
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacing16),
+                // Ticket details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ticket.title.isEmpty
+                            ? "Task #${ticket.id}"
+                            : ticket.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: AppTheme.onSurfaceColor,
+                        ),
+                      ),
+                      const SizedBox(height: AppTheme.spacing4),
+                      Text(
+                        'Meter: ${ticket.meterNumber.isEmpty ? "N/A" : ticket.meterNumber}',
+                        style: const TextStyle(
+                          color: AppTheme.onSurfaceVariantColor,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Status badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacing12,
+                    vertical: AppTheme.spacing6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    ticket.status.toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ],
             ),
-            trailing: Icon(statusIcon, color: statusColor),
           ),
-          const Divider(height: 0),
-          ButtonBar(
-            alignment: MainAxisAlignment.end,
-            buttonPadding: const EdgeInsets.symmetric(horizontal: 8),
-            children: [
-              TextButton(
-                onPressed: () {
-                  // Navigate to ticket details
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => TicketDetailScreen(ticketId: ticket.id),
-                    ),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: AppTheme.primaryColor,
+          // Action buttons
+          Container(
+            padding: const EdgeInsets.fromLTRB(
+              AppTheme.spacing20,
+              0,
+              AppTheme.spacing20,
+              AppTheme.spacing20,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              TicketDetailScreen(ticketId: ticket.id),
+                        ),
+                      );
+                    },
+                    style: AppTheme.secondaryButtonStyle,
+                    child: const Text('View Details'),
+                  ),
                 ),
-                child: const Text('VIEW DETAILS'),
-              ),
-              ElevatedButton(
-                onPressed: ticket.status.toLowerCase() == 'completed'
-                    ? null
-                    : () {
-                        // Navigate to ticket completion
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                TicketCompletionScreen(ticket: ticket),
-                          ),
-                        );
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
+                const SizedBox(width: AppTheme.spacing12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: ticket.status.toLowerCase() == 'completed'
+                        ? null
+                        : () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    TicketCompletionScreen(ticket: ticket),
+                              ),
+                            );
+                          },
+                    style: AppTheme.primaryButtonStyle,
+                    child: Text(ticket.status.toLowerCase() == 'completed'
+                        ? 'Completed'
+                        : 'Complete'),
+                  ),
                 ),
-                child: Text(ticket.status.toLowerCase() == 'completed'
-                    ? 'COMPLETED'
-                    : 'COMPLETE'),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -229,26 +303,41 @@ class _TicketListScreenState extends State<TicketListScreen> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.assignment,
-            size: 64,
-            color: AppTheme.secondaryColor.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'No tickets found',
-            style: AppTheme.subheadingStyle,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Try changing your filters or search criteria',
-            style: AppTheme.captionStyle,
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(AppTheme.spacing32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.assignment_outlined,
+                size: 40,
+                color: AppTheme.primaryColor,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacing24),
+            const Text(
+              'No tickets found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.onSurfaceColor,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacing8),
+            const Text(
+              'Try changing your filters or search criteria',
+              style: AppTheme.captionStyle,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

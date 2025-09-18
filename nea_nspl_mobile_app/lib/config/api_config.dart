@@ -1,15 +1,20 @@
 class ApiConfig {
-  // Base URL for the mobile API
-  static const String baseUrl = 'https://nspl-project.vercel.app/api/mobile';
+  // Base URL for the API - single source of truth
+  static const String baseUrl = 'https://nspl-project.vercel.app/api';
 
   // Auth endpoints
-  static const String login = '/auth/login';
+  static const String login = '/mobile/auth/login';
 
   // Field agent endpoints
-  static const String fieldAgents = '/field-agents';
+  static const String fieldAgents = '/mobile/field-agents';
 
   // Task endpoints
-  static const String tasks = '/tasks';
-  static const String taskDetail = '/tasks/'; // + taskId
-  static const String completeTask = '/tasks/'; // + taskId + '/complete'
+  static const String tasks = '/mobile/tasks';
+  static const String taskDetail = '/mobile/tasks/'; // + taskId
+  static const String completeTask = '/mobile/tasks/'; // + taskId + '/complete'
+
+  // Mobile admin gallery endpoints (follows mobile API pattern)
+  static const String galleryImages = '/mobile/admin/gallery/images';
+  static const String attachmentUrl =
+      '/mobile/attachments/'; // + imageId + '/url'
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../config/theme.dart';
 import '../models/ticket.dart';
 import '../providers/ticket_provider.dart';
 import '../widgets/app_bar.dart';
-import '../widgets/error_dialog.dart';
 import '../widgets/loading_indicator.dart';
 import 'ticket_completion_screen.dart';
 
@@ -107,24 +107,14 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       backgroundColor: AppTheme.backgroundColor,
       appBar: const CustomAppBar(title: 'Ticket Details'),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppTheme.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Ticket header section
+            // Ticket header section - Modern field service design
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+              padding: const EdgeInsets.all(AppTheme.spacing24),
+              decoration: AppTheme.elevatedCardDecoration,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -133,7 +123,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       Expanded(
                         child: Text(
                           ticket.title.isEmpty
-                              ? ticket.id
+                              ? "Task #${ticket.id}"
                               : ticket.title,
                           style: AppTheme.headingStyle,
                         ),
@@ -141,50 +131,56 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       _buildStatusChip(ticket.status),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Created on: ${dateFormat.format(ticket.createdAt)}',
-                    style: AppTheme.captionStyle,
+                  const SizedBox(height: AppTheme.spacing12),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: AppTheme.onSurfaceVariantColor,
+                      ),
+                      const SizedBox(width: AppTheme.spacing8),
+                      Text(
+                        'Created: ${dateFormat.format(ticket.createdAt)}',
+                        style: AppTheme.captionStyle,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppTheme.spacing20),
                   const Text(
                     'Description',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: AppTheme.subheadingStyle,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    ticket.description.isEmpty
-                        ? "No description provided"
-                        : ticket.description,
-                    style: AppTheme.bodyStyle,
+                  const SizedBox(height: AppTheme.spacing8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppTheme.spacing16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.backgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppTheme.outlineColor),
+                    ),
+                    child: Text(
+                      ticket.description.isEmpty
+                          ? "No description provided"
+                          : ticket.description,
+                      style: AppTheme.bodyStyle,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.spacing24),
 
             // Consumer details section
             const Text(
               'Consumer Details',
               style: AppTheme.subheadingStyle,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppTheme.spacing12),
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+              padding: const EdgeInsets.all(AppTheme.spacing20),
+              decoration: AppTheme.cardDecoration,
               child: Column(
                 children: [
                   _buildDetailRow(
@@ -192,7 +188,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.spacing24),
 
             // Attachments section (if any)
             if (ticket.attachments.isNotEmpty)
@@ -203,51 +199,76 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     'Attachments',
                     style: AppTheme.subheadingStyle,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppTheme.spacing12),
                   Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.all(AppTheme.spacing20),
+                    decoration: AppTheme.cardDecoration,
                     child: Column(
                       children: ticket.attachments.map((url) {
-                        return ListTile(
-                          leading: const Icon(Icons.image,
-                              color: AppTheme.primaryColor),
-                          title: const Text('Photo'),
-                          trailing: const Icon(Icons.visibility),
-                          onTap: () {
-                            // View attachment (not implemented in this MVP)
-                          },
+                        return Container(
+                          margin:
+                              const EdgeInsets.only(bottom: AppTheme.spacing8),
+                          padding: const EdgeInsets.all(AppTheme.spacing12),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: AppTheme.primaryColor.withOpacity(0.2)),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.all(AppTheme.spacing8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Icon(
+                                  Icons.image,
+                                  color: AppTheme.primaryColor,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacing12),
+                              const Expanded(
+                                child: Text(
+                                  'Photo Attachment',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.onSurfaceColor,
+                                  ),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.visibility,
+                                color: AppTheme.primaryColor,
+                                size: 20,
+                              ),
+                            ],
+                          ),
                         );
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppTheme.spacing24),
                 ],
               ),
 
             // Action button for non-completed tickets
             if (!isCompleted)
-              SizedBox(
+              Container(
                 width: double.infinity,
-                height: 50,
+                height: 56,
+                margin: const EdgeInsets.only(top: AppTheme.spacing16),
                 child: ElevatedButton(
                   onPressed: () => _navigateToCompletionScreen(ticket),
-                  style: AppTheme.primaryButtonStyle,
+                  style: AppTheme.floatingButtonStyle,
                   child: const Text(
-                    'COMPLETE TICKET',
+                    'Complete Ticket',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -262,8 +283,15 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: AppTheme.secondaryColor),
-        const SizedBox(width: 12),
+        Container(
+          padding: const EdgeInsets.all(AppTheme.spacing8),
+          decoration: BoxDecoration(
+            color: AppTheme.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 20, color: AppTheme.primaryColor),
+        ),
+        const SizedBox(width: AppTheme.spacing16),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,14 +299,19 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               Text(
                 label,
                 style: const TextStyle(
-                  color: AppTheme.secondaryColor,
-                  fontSize: 14,
+                  color: AppTheme.onSurfaceVariantColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: AppTheme.spacing4),
               Text(
                 value.isEmpty ? "Not available" : value,
-                style: AppTheme.bodyStyle,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.onSurfaceColor,
+                ),
               ),
             ],
           ),
@@ -304,18 +337,23 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         chipColor = AppTheme.secondaryColor;
     }
 
-    return Chip(
-      label: Text(
-        status.isEmpty ? "Unknown" : status,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacing12,
+        vertical: AppTheme.spacing6,
+      ),
+      decoration: BoxDecoration(
+        color: chipColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        status.isEmpty ? "Unknown" : status.toUpperCase(),
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       ),
-      backgroundColor: chipColor,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
 }
