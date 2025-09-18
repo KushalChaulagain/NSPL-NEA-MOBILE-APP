@@ -158,7 +158,7 @@ class _TicketCompletionScreenState extends State<TicketCompletionScreen> {
                           const SizedBox(height: AppTheme.spacing16),
                           Text(
                             widget.ticket.title.isEmpty
-                                ? "Task #${widget.ticket.id}"
+                                ? "Task: ${widget.ticket.id}"
                                 : widget.ticket.title,
                             style: const TextStyle(
                               fontSize: 18,

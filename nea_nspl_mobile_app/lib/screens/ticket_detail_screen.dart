@@ -123,7 +123,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       Expanded(
                         child: Text(
                           ticket.title.isEmpty
-                              ? "Task #${ticket.id}"
+                              ? "Task: ${ticket.id}"
                               : ticket.title,
                           style: AppTheme.headingStyle,
                         ),

@@ -526,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    ticket.title.isEmpty ? "Task #${ticket.id}" : ticket.title,
+                    ticket.title.isEmpty ? "Task: ${ticket.id}" : ticket.title,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,

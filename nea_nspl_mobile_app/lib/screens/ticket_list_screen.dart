@@ -209,7 +209,7 @@ class _TicketListScreenState extends State<TicketListScreen> {
                     children: [
                       Text(
                         ticket.title.isEmpty
-                            ? "Task #${ticket.id}"
+                            ? "Task: ${ticket.id}"
                             : ticket.title,
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,

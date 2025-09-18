@@ -87,7 +87,7 @@ class _ImageSearchWidgetState extends State<ImageSearchWidget> {
         TextField(
           controller: _searchController,
           decoration: InputDecoration(
-            hintText: 'Search by task title, meter number, or field agent...',
+            hintText: 'Search',
             prefixIcon: const Icon(Icons.search),
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(

@@ -121,14 +121,12 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Account Information',
                     style: AppTheme.subheadingStyle,
                   ),
                   const SizedBox(height: 16),
                   _buildInfoRow('Username', user.username),
-                  const Divider(),
-                  _buildInfoRow('ID', user.id),
                   const Divider(),
                   _buildInfoRow('Status', user.status),
                 ],
