@@ -183,8 +183,23 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               decoration: AppTheme.cardDecoration,
               child: Column(
                 children: [
+                  _buildDetailRow('Meter Type', ticket.meter ?? 'Not available',
+                      Icons.electric_meter),
+                  const SizedBox(height: AppTheme.spacing16),
                   _buildDetailRow(
-                      'Meter Number', ticket.meterNumber, Icons.electric_meter),
+                      'Meter Serial Number', ticket.meterNumber, Icons.numbers),
+                  const SizedBox(height: AppTheme.spacing16),
+                  _buildDetailRow('Meter Reading',
+                      ticket.meterReading ?? 'Not available', Icons.speed),
+                  const SizedBox(height: AppTheme.spacing16),
+                  _buildDetailRow('Region', ticket.region ?? 'Not available',
+                      Icons.location_on),
+                  const SizedBox(height: AppTheme.spacing16),
+                  _buildDetailRow(
+                      'Site', ticket.site ?? 'Not available', Icons.business),
+                  const SizedBox(height: AppTheme.spacing16),
+                  _buildDetailRow('Month', _formatMonth(ticket.month),
+                      Icons.calendar_month),
                 ],
               ),
             ),
@@ -318,6 +333,45 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         ),
       ],
     );
+  }
+
+  String _formatMonth(String? month) {
+    if (month == null || month.isEmpty) {
+      return 'Not available';
+    }
+
+    // Handle YYYY-MM format
+    if (month.contains('-') && month.length >= 7) {
+      try {
+        final parts = month.split('-');
+        final year = parts[0];
+        final monthNum = int.parse(parts[1]);
+
+        // Convert month number to name
+        final monthNames = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ];
+
+        if (monthNum >= 1 && monthNum <= 12) {
+          return '${monthNames[monthNum - 1]} $year';
+        }
+      } catch (e) {
+        // If parsing fails, return the original value
+      }
+    }
+
+    return month;
   }
 
   Widget _buildStatusChip(String status) {

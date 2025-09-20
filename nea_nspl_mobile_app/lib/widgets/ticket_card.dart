@@ -65,23 +65,33 @@ class TicketCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
-
-                // Meter number
+                // Meter type
                 Row(
                   children: [
                     Icon(Icons.electric_meter,
                         size: 16, color: AppTheme.secondaryColor),
                     const SizedBox(width: 8),
                     Text(
-                      'Meter #: ${ticket.meterNumber}',
+                      'Meter: ${ticket.meter ?? "Not available"}',
+                      style: AppTheme.bodyStyle.copyWith(fontSize: 14),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
+                // Site information
+                Row(
+                  children: [
+                    Icon(Icons.business,
+                        size: 16, color: AppTheme.secondaryColor),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Site: ${ticket.site ?? "Not available"}',
                       style: AppTheme.bodyStyle.copyWith(fontSize: 14),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
-
-                
               ],
             ),
           ),

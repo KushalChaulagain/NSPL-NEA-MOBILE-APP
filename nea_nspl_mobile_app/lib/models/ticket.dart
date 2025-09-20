@@ -13,6 +13,7 @@ class Ticket {
   final String? region;
   final String? month;
   final String? userId;
+  final String? meterReading;
 
   Ticket({
     required this.id,
@@ -28,6 +29,7 @@ class Ticket {
     this.region,
     this.month,
     this.userId,
+    this.meterReading,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
@@ -37,7 +39,10 @@ class Ticket {
       description: json['description'] ?? '',
       status: json['status'] ?? 'pending',
       assignedTo: json['assignedTo'] ?? '',
-      meterNumber: json['meterNumber'] ?? json['meter'] ?? '',
+      meterNumber: json['meterNumber'] ??
+          json['meterSerialNumber'] ??
+          json['details']?['meterSerialNumber'] ??
+          '',
       createdAt: DateTime.parse(json['createdAt']),
       attachments: json['attachments'] != null
           ? List<String>.from(json['attachments'])
@@ -48,6 +53,9 @@ class Ticket {
       region: json['region'],
       month: json['month'],
       userId: json['userId'],
+      meterReading: json['meterReading']?.toString() ??
+          json['details']?['meterReading']?.toString() ??
+          json['details']?['description']?.toString(),
     );
   }
 
@@ -69,6 +77,7 @@ class Ticket {
     if (region != null) data['region'] = region;
     if (month != null) data['month'] = month;
     if (userId != null) data['userId'] = userId;
+    if (meterReading != null) data['meterReading'] = meterReading;
 
     return data;
   }
