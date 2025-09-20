@@ -3,6 +3,7 @@ class GalleryImage {
   final String taskId;
   final String taskTitle;
   final String meterNumber;
+  final String region;
   final String fieldAgentName;
   final String fieldAgentId;
   final DateTime uploadedAt;
@@ -11,12 +12,15 @@ class GalleryImage {
   final String mimeType;
   final String? signedUrl;
   final DateTime? urlExpiresAt;
+  final String? meterReading;
+  final String? meterSerialNumber;
 
   GalleryImage({
     required this.id,
     required this.taskId,
     required this.taskTitle,
     required this.meterNumber,
+    required this.region,
     required this.fieldAgentName,
     required this.fieldAgentId,
     required this.uploadedAt,
@@ -25,6 +29,8 @@ class GalleryImage {
     required this.mimeType,
     this.signedUrl,
     this.urlExpiresAt,
+    this.meterReading,
+    this.meterSerialNumber,
   });
 
   factory GalleryImage.fromJson(Map<String, dynamic> json) {
@@ -33,6 +39,7 @@ class GalleryImage {
       taskId: json['taskId'] ?? '',
       taskTitle: json['taskTitle'] ?? '',
       meterNumber: json['meterNumber'] ?? '',
+      region: json['region'] ?? '',
       fieldAgentName: json['fieldAgentName'] ?? '',
       fieldAgentId: json['fieldAgentId'] ?? '',
       uploadedAt: DateTime.parse(json['uploadedAt']),
@@ -43,6 +50,8 @@ class GalleryImage {
       urlExpiresAt: json['urlExpiresAt'] != null
           ? DateTime.parse(json['urlExpiresAt'])
           : null,
+      meterReading: json['meterReading']?.toString(),
+      meterSerialNumber: json['meterSerialNumber']?.toString(),
     );
   }
 
@@ -52,6 +61,7 @@ class GalleryImage {
       'taskId': taskId,
       'taskTitle': taskTitle,
       'meterNumber': meterNumber,
+      'region': region,
       'fieldAgentName': fieldAgentName,
       'fieldAgentId': fieldAgentId,
       'uploadedAt': uploadedAt.toIso8601String(),
@@ -60,6 +70,8 @@ class GalleryImage {
       'mimeType': mimeType,
       'signedUrl': signedUrl,
       'urlExpiresAt': urlExpiresAt?.toIso8601String(),
+      'meterReading': meterReading,
+      'meterSerialNumber': meterSerialNumber,
     };
   }
 

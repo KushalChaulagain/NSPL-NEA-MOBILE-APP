@@ -106,6 +106,7 @@ class GalleryProvider extends ChangeNotifier {
               taskId: _images[i].taskId,
               taskTitle: _images[i].taskTitle,
               meterNumber: _images[i].meterNumber,
+              region: _images[i].region,
               fieldAgentName: _images[i].fieldAgentName,
               fieldAgentId: _images[i].fieldAgentId,
               uploadedAt: _images[i].uploadedAt,
@@ -115,6 +116,8 @@ class GalleryProvider extends ChangeNotifier {
               signedUrl: signedUrl,
               urlExpiresAt:
                   DateTime.now().add(const Duration(hours: 1)), // 1 hour expiry
+              meterReading: _images[i].meterReading,
+              meterSerialNumber: _images[i].meterSerialNumber,
             );
           } else {
             print('No signed URL returned for image $imageId');

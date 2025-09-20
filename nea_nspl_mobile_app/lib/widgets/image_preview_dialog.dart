@@ -140,21 +140,18 @@ class ImagePreviewDialog extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // Image details
-                    _buildDetailRow('Task ID', image.taskId),
+                    _buildDetailRow('Ticket ID', image.taskId),
                     _buildDetailRow('Site ID',
                         image.taskTitle.isNotEmpty ? image.taskTitle : 'N/A'),
-                    _buildDetailRow(
-                        'Region',
-                        image.meterNumber.isNotEmpty
-                            ? image.meterNumber
-                            : 'N/A'),
+                    _buildDetailRow('Region',
+                        image.region.isNotEmpty ? image.region : 'N/A'),
                     _buildDetailRow('Field Agent', image.fieldAgentName),
-                    _buildDetailRow('File Name', image.fileName),
-                    _buildDetailRow('File Size', image.formattedFileSize),
                     _buildDetailRow(
-                        'Upload Date',
-                        DateFormat('MMM d, yyyy h:mm a')
-                            .format(image.uploadedAt)),
+                        'Meter Reading', image.meterReading ?? 'N/A'),
+                    _buildDetailRow('Meter Serial Number',
+                        image.meterSerialNumber ?? 'N/A'),
+                    _buildDetailRow('Upload Date',
+                        DateFormat('MMM d, yyyy').format(image.uploadedAt)),
 
                     const SizedBox(height: 16),
 
@@ -289,7 +286,7 @@ class ImagePreviewDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Image saved to your device gallery!'),
-             SizedBox(height: 12),
+            SizedBox(height: 12),
           ],
         ),
         actions: [

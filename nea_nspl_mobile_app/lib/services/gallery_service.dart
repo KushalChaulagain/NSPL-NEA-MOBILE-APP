@@ -111,13 +111,20 @@ class GalleryService {
             id: imageJson['id'] ?? '',
             taskId: imageJson['task']?['taskId'] ?? '',
             taskTitle: imageJson['task']?['site'] ?? 'Unknown Site',
-            meterNumber: imageJson['task']?['region'] ?? 'Unknown Region',
+            meterNumber: imageJson['task']?['meterNumber'] ??
+                imageJson['task']?['meter'] ??
+                'Unknown Meter',
+            region: imageJson['task']?['region'] ?? 'Unknown Region',
             fieldAgentName: imageJson['fieldAgent']?['name'] ?? 'Unknown Agent',
             fieldAgentId: imageJson['fieldAgent']?['username'] ?? '',
             uploadedAt: DateTime.parse(imageJson['uploadedAt']),
             fileName: imageJson['name'] ?? 'image.jpg',
             fileSize: imageJson['size']?.toString() ?? '0',
             mimeType: imageJson['type'] ?? 'image/jpeg',
+            meterReading:
+                imageJson['task']?['meterReading']?.toString() ?? 'N/A',
+            meterSerialNumber:
+                imageJson['task']?['meterSerialNumber']?.toString() ?? 'N/A',
           );
 
           allImages.add(galleryImage);
@@ -419,6 +426,7 @@ class GalleryService {
         taskId: 'TASK-001',
         taskTitle: 'Meter Reading - Site A',
         meterNumber: 'MTR-12345',
+        region: 'Central',
         fieldAgentName: 'John Doe',
         fieldAgentId: 'agent-001',
         uploadedAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -431,6 +439,7 @@ class GalleryService {
         taskId: 'TASK-002',
         taskTitle: 'Equipment Inspection',
         meterNumber: 'MTR-67890',
+        region: 'Eastern',
         fieldAgentName: 'Jane Smith',
         fieldAgentId: 'agent-002',
         uploadedAt: DateTime.now().subtract(const Duration(days: 1)),
@@ -443,6 +452,7 @@ class GalleryService {
         taskId: 'TASK-003',
         taskTitle: 'Maintenance Check',
         meterNumber: 'MTR-11111',
+        region: 'Western',
         fieldAgentName: 'Mike Johnson',
         fieldAgentId: 'agent-003',
         uploadedAt: DateTime.now().subtract(const Duration(hours: 6)),
@@ -455,6 +465,7 @@ class GalleryService {
         taskId: 'TASK-004',
         taskTitle: 'Safety Inspection',
         meterNumber: 'MTR-22222',
+        region: 'Southern',
         fieldAgentName: 'Sarah Wilson',
         fieldAgentId: 'agent-004',
         uploadedAt: DateTime.now().subtract(const Duration(hours: 2)),
